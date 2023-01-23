@@ -5,16 +5,29 @@ generator client {
   provider = "prisma-client-js"
 }
 
+
+//connecting MySQL database server to our expressJs application and defining schemas
+
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = "mysql://USER:PASSWORD@HOST:PORT/DATABASE"
 }
 
-model Task {
-  id           Int      @id @default(autoincrement())
-  createdAT    DateTime @default(now())
-  updatedAT    DateTime @updatedAt
-  title        String?  @unique @db.VarChar(255)
-  description  String?
-  isCompleteed Boolean
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  posts Post[]
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  viewCount Int      @default(0)
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
 }
